@@ -1,0 +1,22 @@
+{
+    "name": "parser/site-scanner",
+    "description": "Site scanner for organization information",
+    "type": "project",
+    "require": {
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Parser\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Developer",
+            "email": "developer@example.com"
+        }
+    ],
+    "minimum-stability": "stable"
+} 
