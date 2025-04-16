@@ -92,6 +92,11 @@ class JsonToExcelConverter
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
         
+        // Автоматическая высота строк
+        for ($i = 2; $i <= $row - 1; $i++) {
+            $sheet->getRowDimension($i)->setRowHeight(-1);
+        }
+        
         // Стиль для данных
         $dataStyle = [
             'borders' => [
@@ -106,11 +111,6 @@ class JsonToExcelConverter
         ];
         
         $sheet->getStyle('A2:' . array_key_last(self::COLUMNS) . ($row - 1))->applyFromArray($dataStyle);
-        
-        // Автоматическая высота строк
-        for ($i = 2; $i <= $row - 1; $i++) {
-            $sheet->getRowDimension($i)->setRowHeight(-1);
-        }
         
         // Сохраняем файл
         $writer = new Xlsx($spreadsheet);

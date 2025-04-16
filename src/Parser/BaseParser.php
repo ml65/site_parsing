@@ -7,6 +7,7 @@ use Parser\Model\Site;
 abstract class BaseParser implements ParserInterface
 {
     protected const PHONE_PATTERN = '/\+?[78][\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/';
+    protected const PHONE_PATTERN_8800 = '/8800\d{7}/';
     protected const EMAIL_PATTERN = '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/';
     protected const INN_PATTERN = '/\b\d{10}\b|\b\d{12}\b/';
     protected const OGRN_PATTERN = '/\b\d{13}\b/';
@@ -27,7 +28,9 @@ abstract class BaseParser implements ParserInterface
     {
         // Удаляем стили и скрипты
         $content = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $content);
-        $content = preg_replace('/<script[^>]*>.*?<\/script>/is', '', $content);
+        //$content = preg_replace('/<script[^>]*>.*?<\/script>/is', '', $content);
+        $content = preg_replace('/<script[^>]*>/is', '', $content);
+        $content = preg_replace('/<\/script>/is', '', $content);
         
         // Заменяем теги на переносы строк
         $content = str_replace(['<br>', '<br/>', '<br />', '</p>', '</div>'], "\n", $content);
@@ -50,12 +53,41 @@ abstract class BaseParser implements ParserInterface
     {
         $pri = false;
         $content = $this->cleanContent($content);
+        
+        if (preg_match_all(self::PHONE_PATTERN_8800, $content, $matches)) {
+            $info = 'contact_800';
+            foreach ($matches[0] as $phone) {
+                // Ищем контекст вокруг номера телефона
+                if (preg_match('/(?:\w+\s+){0,2}'.$phone.'(?:\s+\w+){0,2}/', $content, $context)) {
+                    $contextWords = array_filter(explode(' ', $context[0]));
+                    $contextWords = array_diff($contextWords, [$phone]);
+                    if (!empty($contextWords)) {
+                        $info .= ' ' . implode(' ', $contextWords);
+                    }
+                }
+                $site->addPhone($phone, $info);
+                $pri = true;
+            }
+        }   
+        
         if (preg_match_all(self::PHONE_PATTERN, $content, $matches)) {
             foreach ($matches[0] as $phone) {
-                $site->addPhone($phone, 'contact');
+                $info = 'contact';
+                
+                // Ищем контекст вокруг номера телефона
+                if (preg_match('/(?:\w+\s+){0,2}'.$phone.'(?:\s+\w+){0,2}/', $content, $context)) {
+                    $contextWords = array_filter(explode(' ', $context[0]));
+                    $contextWords = array_diff($contextWords, [$phone]);
+                    if (!empty($contextWords)) {
+                        $info .= ' ' . implode(' ', $contextWords);
+                    }
+                }
+                
+                $site->addPhone($phone, $info);
                 $pri = true;
             }
         }
+        
         return $pri;
     }
 
