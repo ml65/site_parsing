@@ -5,8 +5,10 @@ namespace Parser\Model;
 class Site
 {
     private string $domain;
+    private int $id;
     private ?string $redirectDomain = null;
-    private ?string $parentDomain = null;
+    private ?string $redurectUrl = null;
+    private array $visitedUrls = [];
     private array $phones = [];
     private array $emails = [];
     private array $urls = [];
@@ -16,9 +18,10 @@ class Site
     private array $ogrnip = [];
     private bool $spb = false;
 
-    public function __construct(string $domain)
+    public function __construct(string $domain, int $id=0)
     {
         $this->domain = $domain;
+        $this->id = $id;
     }
 
     public function getDomain(): string
@@ -31,20 +34,46 @@ class Site
         $this->redirectDomain = $redirectDomain;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function getRedirectDomain(): ?string
     {
         return $this->redirectDomain;
     }
 
-    public function setParentDomain(?string $parentDomain): void
+    public function setredirectUrl(?string $redirectUrl): void
     {
-        $this->parentDomain = $parentDomain;
+        $this->redirectUrl = $redirectUrl;
     }
 
-    public function getParentDomain(): ?string
+    public function getredirectUrl(): ?string
     {
-        return $this->parentDomain;
+        return $this->redirectUrl;
     }
+
+    public function addVisitedUrls(string $url): void
+    {
+        $this->visitedUrls[$url] = true;
+    }
+
+    public function getVisitedUrls(): array
+    {
+        return $this->visitedUrls;
+    }
+
+    public function isVisitedUrls(string $url): bool
+    {
+        return isset($this->visitedUrls[$url]);
+    }
+
 
     public function addPhone(string $phone, string $description): void
     {
@@ -129,9 +158,11 @@ class Site
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'domain' => $this->domain,
             'redirect_domain' => $this->redirectDomain,
-            'parent_domain' => $this->parentDomain,
+            'redirect_url' => $this->redurectUrl,
+            'visited_urls' => $this->visitedUrls,
             'phones' => $this->phones,
             'emails' => $this->emails,
             'urls' => $this->urls,
