@@ -15,7 +15,7 @@ class JsonToExcelConverter
         'B' => 'Домен',
         'C' => 'Редирект',
         'D' => 'Редирект URL',
-        'E' => 'Просмотренные URL',
+        'E' => 'Ссылки URL',
         'F' => 'Телефоны',
         'G' => 'Email',
         'H' => 'Telegram',
@@ -75,13 +75,13 @@ class JsonToExcelConverter
             $sheet->setCellValue('B' . $row, $domain);
             $sheet->setCellValue('C' . $row, $siteData['redirect_domain'] ?? '');
             $sheet->setCellValue('D' . $row, $siteData['redirect_url'] ?? '');
-            $sheet->setCellValue('E' . $row, $this->formatArray2($siteData['visited_urls'] ?? []));
+            $sheet->setCellValue('E' . $row, $this->formatArray2($siteData['urls'] ?? []));
             $sheet->setCellValue('F' . $row, $this->formatArray2($siteData['phones'] ?? []));
             $sheet->setCellValue('G' . $row, $this->formatArray2($siteData['emails'] ?? []));
             $sheet->setCellValue('H' . $row, $this->formatArray2($siteData['telegram'] ?? []));
-            $sheet->setCellValue('I' . $row, $this->formatArray($siteData['inn'] ?? []));
-            $sheet->setCellValue('J' . $row, $this->formatArray($siteData['ogrn'] ?? []));
-            $sheet->setCellValue('K' . $row, $this->formatArray($siteData['ogrnip'] ?? []));
+            $sheet->setCellValue('I' . $row, $this->formatArray2($siteData['inn'] ?? []));
+            $sheet->setCellValue('J' . $row, $this->formatArray2($siteData['ogrn'] ?? []));
+            $sheet->setCellValue('K' . $row, $this->formatArray2($siteData['ogrnip'] ?? []));
             $sheet->setCellValue('L' . $row, $siteData['spb'] ? 'Да' : 'Нет');
             
             $row++;

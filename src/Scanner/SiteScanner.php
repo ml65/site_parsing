@@ -27,14 +27,7 @@ class SiteScanner
 
         echo "=URL=",$url,"\n";
         if ($site->isVisitedUrls($url)) {
-/*
-            $parentDomain = $this->getParentDomain($site->getDomain());
-            if ($parentDomain) {
-                $fc = fopen('parents.txt', 'a');
-                fwrite($fc, $parentDomain."\n");
-                fclose($fc);
-            }
- */           return;
+            return;
         }
         
         $site->addVisitedUrls($url);
@@ -71,15 +64,17 @@ class SiteScanner
                 && !strpos($parsedUrl['path'], '#')) {
                 $newUrl = 'https://' . $parsedUrl['host'] . ($parsedUrl['path'] ?? '');
                 $this->scan($newUrl, $site, $depth + 1);
+            } else {
+                $this->parser->parse($link, $site, $url);
             }
         }
 
-        if (!$this->parser->parse($response['content'], $site)) {
+        if (!$this->parser->parse($response['content'], $site, $url)) {
             // страница защищена? Формируем кукиес и делаем второй запрос
             echo "=Нет информации на странице!!! пытаемся получить куки =",$url,"\n";
             $cookies = $this->httpClient->getCookies($response['content']);
             $response = $this->httpClient->getSecond($url, $cookies);
-            $this->parser->parse($response['content'], $site);
+            $this->parser->parse($response['content'], $site, $url);
 
         }
 
@@ -93,7 +88,7 @@ class SiteScanner
      * @param string $domain Исходный домен
      * @return string|null Домен предыдущего уровня или null, если невозможно получить
      */
-    private function getParentDomain(string $domain): ?string
+    public function getParentDomain(string $domain): ?string
     {
         $parts = explode('.', $domain);
         

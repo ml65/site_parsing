@@ -1,0 +1,8 @@
+# Скрываем каталог tmp
+tmp/
+
+# Скрываем каталог vendor
+vendor/
+
+# Скрываем файл sites.csv
+sites.csv

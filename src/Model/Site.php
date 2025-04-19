@@ -6,8 +6,8 @@ class Site
 {
     private string $domain;
     private int $id;
-    private ?string $redirectDomain = null;
-    private ?string $redurectUrl = null;
+    private string $redirectDomain;
+    private string $redurectUrl;
     private array $visitedUrls = [];
     private array $phones = [];
     private array $emails = [];
@@ -46,7 +46,8 @@ class Site
 
     public function getRedirectDomain(): ?string
     {
-        return $this->redirectDomain;
+        $redirectDomain = $this->redirectDomain ?? null;
+        return $redirectDomain;
     }
 
     public function setredirectUrl(?string $redirectUrl): void
@@ -95,7 +96,7 @@ class Site
         return $this->emails;
     }
 
-    public function addUrl(string $url, string $description): void
+    public function addUrls(string $url, string $description): void
     {
         $this->urls[$url] = $description;
     }
@@ -160,9 +161,9 @@ class Site
         return [
             'id' => $this->id,
             'domain' => $this->domain,
-            'redirect_domain' => $this->redirectDomain,
-            'redirect_url' => $this->redurectUrl,
-            'visited_urls' => $this->visitedUrls,
+            'redirect_domain' => $this->redirectDomain??'',
+            'redirect_url' => $this->redurectUrl??'',
+            'visited_urls' => $this->visitedUrls??'',
             'phones' => $this->phones,
             'emails' => $this->emails,
             'urls' => $this->urls,

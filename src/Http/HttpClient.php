@@ -39,7 +39,7 @@ class HttpClient
         
         curl_close($ch);
 
-        if ($httpCode === 302 && $redirectUrl) {
+        if (($httpCode === 302 || $httpCode === 301) && $redirectUrl) {
             return [
                 'status' => 'redirect',
                 'redirect_url' => $redirectUrl

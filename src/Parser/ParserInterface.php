@@ -6,5 +6,5 @@ use Parser\Model\Site;
 
 interface ParserInterface
 {
-    public function parse(string $content, Site $site): bool;
+    public function parse(string $content, Site $site, string $comment): bool;
 } 
