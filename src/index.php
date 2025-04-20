@@ -62,9 +62,8 @@ try {
     }
     var_dump($results);
     // Сохраняем результаты в JSON
-    $jsonFile = 'object.json';
+    $jsonFile = $inputFile.'.json';
     file_put_contents($jsonFile, json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    echo "=1=";
     // Конвертируем в Excel
     $excelFile = $inputFile . '.xlsx';
     $converter = new JsonToExcelConverter();
