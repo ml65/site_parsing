@@ -70,19 +70,18 @@ class JsonToExcelConverter
         // Заполняем данные
         $row = 2;
         foreach ($data as $domain => $siteData) {
-//            var_dump($siteData); exit;
             $sheet->setCellValue('A' . $row, $siteData['id']);
             $sheet->setCellValue('B' . $row, $domain);
             $sheet->setCellValue('C' . $row, $siteData['redirect_domain'] ?? '');
             $sheet->setCellValue('D' . $row, $siteData['redirect_url'] ?? '');
-            $sheet->setCellValue('E' . $row, $this->formatArray2($siteData['urls'] ?? []));
-            $sheet->setCellValue('F' . $row, $this->formatArray2($siteData['phones'] ?? []));
-            $sheet->setCellValue('G' . $row, $this->formatArray2($siteData['emails'] ?? []));
-            $sheet->setCellValue('H' . $row, $this->formatArray2($siteData['telegram'] ?? []));
-            $sheet->setCellValue('I' . $row, $this->formatArray2($siteData['inn'] ?? []));
-            $sheet->setCellValue('J' . $row, $this->formatArray2($siteData['ogrn'] ?? []));
-            $sheet->setCellValue('K' . $row, $this->formatArray2($siteData['ogrnip'] ?? []));
-            $sheet->setCellValue('L' . $row, $siteData['spb'] ? 'Да' : 'Нет');
+            $sheet->setCellValue('E' . $row, $this->formatArrayKey($siteData['urls'] ?? []));
+            $sheet->setCellValue('F' . $row, $this->formatArrayPhones($siteData['phones'] ?? []));
+            $sheet->setCellValue('G' . $row, $this->formatArrayKey($siteData['emails'] ?? []));
+            $sheet->setCellValue('H' . $row, $this->formatArrayUrl($siteData['telegram'] ?? []));
+            $sheet->setCellValue('I' . $row, $this->formatArray($siteData['inn'] ?? []));
+            $sheet->setCellValue('J' . $row, $this->formatArray($siteData['ogrn'] ?? []));
+            $sheet->setCellValue('K' . $row, $this->formatArray($siteData['ogrnip'] ?? []));
+            $sheet->setCellValue('L' . $row, $this->formatArraySpb($siteData['spb'] ?? []));
             
             $row++;
         }
@@ -123,11 +122,11 @@ class JsonToExcelConverter
      * @param array $data Массив данных
      * @return string Отформатированная строка
      */
-    private function formatArray(array $data): string
+    private function formatArrayKey(array $data): string
     {
         $result = [];
         foreach ($data as $key => $value) {
-            $result[] = $key . ' (' . $value . ')';
+            $result[] = $key ;
         }
         return implode("\n", $result);
     }
@@ -138,11 +137,41 @@ class JsonToExcelConverter
      * @param array $data Массив данных
      * @return string Отформатированная строка
      */
-    private function formatArray2(array $data): string
+    private function formatArrayPhones(array $data): string
     {
         $result = [];
         foreach ($data as $key => $value) {
-            $result[] = $key . ';';
+            $result[] = $key ;
+        }
+        return implode("\n", $result);
+    }
+
+      /**
+     * Форматирует массив в строку для Excel
+     * 
+     * @param array $data Массив данных
+     * @return string Отформатированная строка
+     */
+    private function formatArrayUrl(array $data): string
+    {
+        $result = [];
+        foreach ($data as $key => $value) {
+            $result[] = $key ;
+        }
+        return implode(";\n", $result);
+    }
+
+    /**
+     * Форматирует массив в строку для Excel
+     * 
+     * @param array $data Массив данных
+     * @return string Отформатированная строка
+     */
+    private function formatArraySpb(array $data): string
+    {
+        $result = [];
+        foreach ($data as $key => $value) {
+            $result[] = $value . ": " .$key . ' ;';
         }
         return implode("\n", $result);
     }

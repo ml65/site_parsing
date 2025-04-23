@@ -28,7 +28,7 @@ if (!$header) {
 }
 
 // Инициализируем переменные для сплита
-$chunkSize = 1000;
+$chunkSize = 100;
 $chunkNumber = 1;
 $currentChunk = [];
 $currentLineCount = 0;

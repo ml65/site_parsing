@@ -60,8 +60,7 @@ class SiteScanner
                 $parsedUrl['path'] = $link;
             }
             
-            if (($parsedUrl['host'] === $site->getDomain() || $parsedUrl['host'] === $site->getRedirectDomain()) 
-                && !strpos($parsedUrl['path'], '#')) {
+            if (($parsedUrl['host'] === $site->getDomain() || $parsedUrl['host'] === $site->getRedirectDomain())) {
                 $newUrl = 'https://' . $parsedUrl['host'] . ($parsedUrl['path'] ?? '');
                 $this->scan($newUrl, $site, $depth + 1);
             } else {

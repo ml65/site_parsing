@@ -10,13 +10,14 @@ abstract class BaseParser implements ParserInterface
     protected const PHONE_PATTERN = '/(\+?[78][\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s-]?\d{2})/';
     protected const PHONE_PATTERN_8800 = '/(8800[\s\-]?[\d{7}])/';
     protected const EMAIL_PATTERN = '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/';
-    protected const INN_PATTERN = '/\b(\d{10})\b|\b(\d{12})\b/';
-    protected const OGRN_PATTERN = '/\b(\d{13})\b/';
-    protected const OGRNIP_PATTERN = '/\b(\d{15})\b/';
-    protected const TELEGRAM_PATTERN = '/(https:\/\/t\.me\/[a-zA-Z0-9_\/\-]+)/';
-    protected const VK_PATTERN = '/(https:\/\/vk\.com\/[a-zA-Z0-9_\/\-]+)/';
-    protected const OK_PATTERN = '/(https:\/\/ok\.ru\/[a-zA-Z0-9_\/\-]+)/';
-    protected const SPB_PATTERN = '/санкт-петербург|спб|питер|st\.?\s*petersburg/ui';
+    protected const INN_PATTERN = '/\bинн.{1,3}(\d{10})\b|\bинн.{1,3}(\d{12})\b/iu';
+    protected const OGRN_PATTERN = '/\bогрн.{1,3}(\d{13})\b/iu';
+    protected const OGRNIP_PATTERN = '/\bогрнип.{1,3}(\d{15})\b/iu';
+    protected const TELEGRAM_PATTERN = '/(https:\/\/t\.me\/[a-zA-Z0-9_\/\-]+)/i';
+    protected const VK_PATTERN = '/(https:\/\/vk\.com\/[a-zA-Z0-9_\/\-]+)/i';
+    protected const OK_PATTERN = '/(https:\/\/ok\.ru\/[a-zA-Z0-9_\/\-]+)/i';
+    //protected const SPB_PATTERN = '/санкт-петербург|питер|петербург|st\.?\s*petersburg/ui';
+    protected const SPB_PATTERN = '/\bСанкт-Петербурге{0,1}\b/iu';
 
     /**
      * Очищает HTML контент от тегов и стилей
@@ -46,9 +47,6 @@ abstract class BaseParser implements ParserInterface
         
         // Удаляем пробелы в начале и конце строки
         $content = trim($content);
-        echo "\n---------------------------------\n";
-        echo $content;
-        echo "\n---------------------------------\n";
         return $content;
     }
 
@@ -134,21 +132,21 @@ abstract class BaseParser implements ParserInterface
         $pri = false;
         if (preg_match_all(self::TELEGRAM_PATTERN, $content, $matches)) {
             foreach ($matches[0] as $url) {
-                $site->addTelegram($url, $comment);
+                $site->addTelegram($url, "telegram");
                 $pri = true;
             }
         }
 
         if (preg_match_all(self::VK_PATTERN, $content, $matches)) {
             foreach ($matches[0] as $url) {
-                $site->addUrls($url, $comment);
+                $site->addUrls($url, "vk");
                 $pri = true;
             }
         }
 
         if (preg_match_all(self::OK_PATTERN, $content, $matches)) {
             foreach ($matches[0] as $url) {
-                $site->addUrls($url, $comment);
+                $site->addUrls($url, "ok");
                 $pri = true;
             }
         }
@@ -158,12 +156,17 @@ abstract class BaseParser implements ParserInterface
     protected function checkSpb(string $content, Site $site, string $comment): bool
     {
         $pri = false;
-//        $content = $this->cleanContent($content);
-        if (preg_match(self::SPB_PATTERN, $content)) {
-            if ($site->isSpb() == false) {
-                $site->setSpb(true);
+        $content = $this->cleanContent($content);
+        if (preg_match(self::SPB_PATTERN, $content, $matches)) {
+            if (is_array($matches[0])) {
+                foreach ($matches[0] as $spb) {
+                    $site->addSpb($comment, $spb);
+                    $pri = true;
+                }
+            } else {
+                $site->addSpb($comment, $matches[0]);
+                $pri = true;
             }
-            $pri = true;
         }
         return $pri;
     }

@@ -16,7 +16,7 @@ class Site
     private array $inn = [];
     private array $ogrn = [];
     private array $ogrnip = [];
-    private bool $spb = false;
+    private array $spb = [];
 
     public function __construct(string $domain, int $id=0)
     {
@@ -146,12 +146,15 @@ class Site
         return $this->ogrnip;
     }
 
-    public function setSpb(bool $spb): void
+    public function addSpb(string $spb, string $description): void
     {
-        $this->spb = $spb;
+        var_dump($this->spb);
+        echo "=1=",$spb,"\n=2=",$description,"\n";
+        $this->spb[$spb] = $description;
+        var_dump($this->spb);
     }
 
-    public function isSpb(): bool
+    public function getSpb(): array
     {
         return $this->spb;
     }
